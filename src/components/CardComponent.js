@@ -13,12 +13,18 @@ const CardComponent = ({cardData,cardIndex}) => {
     }, []);
 
     const fetchImageDimensions = () => {
+      try {
         Image.getSize(cardData?.xt_image, (width, height) => {
-            setImageDimensions({ width, height });
-            setAspectR(width/height);
-        }, error => {
-            console.error('Error getting image size:', error);
-        })
+          setImageDimensions({ width, height });
+          let ratio  = isNaN(width/height) ? -1 : width/height;
+          setAspectR(ratio);
+      }, error => {
+          console.error('Error getting image size:', error);
+      })
+      } catch (error) {
+          console.log("error",error);
+      }
+
     }
   return (
       !!imageDimensions && <TouchableOpacity
@@ -48,4 +54,4 @@ const CardComponent = ({cardData,cardIndex}) => {
   )
 }
 
-export default CardComponent
+export default  React.memo(CardComponent)

@@ -5,6 +5,7 @@ import CardComponent from '../components/CardComponent';
 import { moderateVerticalScale } from 'react-native-size-matters';
 import { deviceWidth } from '../responsive/responsive';
 import CustomButton from '../components/CustomButton';
+import { showTest } from '../utils/ShowToast';
 const Home = () => {
     const [imageList, setImageList] = useState([]);
     const [loading,setLoading] = useState(false);
@@ -42,9 +43,8 @@ const Home = () => {
                 setImageList(uniqueData);
                 setPage(prev => prev + 1)
             }
-         
         } catch (error) {
-            console.log("error", error);
+            showTest(error?.message);
         }
         finally {
             setLoading(false);
@@ -59,14 +59,11 @@ const Home = () => {
         )
     }, [imageList]);
 
-
     const _renderHeader = useCallback(()=>{
         return(
                 <Text style={styles.text1}>Image Gallery</Text>
         )
     },[])
-
-
     const emptyList = useCallback(() => {
         return (
             <>
@@ -82,53 +79,40 @@ const Home = () => {
         )
     }, []);
     const keyExtractor=useCallback((item)=>`${item.id}`,[imageList]);
-    console.log("inset",insetScreen);
+    const renderFooter = useCallback(() => {
+        return (
+                <CustomButton
+                        buttonText={"Load more images"}
+                        onButtonPress={getImageData}
+                        isLoading={loading}
+                    />
+        )
+    },[loading]);
   return (
-    <View style={styles.main}>
-          <SafeAreaView style={{
-              flex: 0.9
-          }}>
-              <FlatList
-                  showsVerticalScrollIndicator={false}
-                  ListHeaderComponent={_renderHeader}
-                  data={imageList?.length > 0 ? imageList : []}
-                  renderItem={_renderItem}
-                  keyExtractor={keyExtractor}
-                  contentContainerStyle={styles.container}
-                  style={styles.list}
-                  ListHeaderComponentStyle={styles.headerStyle}
-                  stickyHeaderIndices={[0]}
-                  ListEmptyComponent={emptyList}
-              />
-          </SafeAreaView>
+    <SafeAreaView style={styles.main}>
           {
-              imageList?.length > 0 && (
-                  <View style={{
-                      flex: 0.1,
-                      alignItems: "center",
-                      backgroundColor: "#FFFFFF",
-                      shadowColor: "#000",
-                      shadowOffset: {
-                          width: 0,
-                          height: 4,
-                      },
-                      shadowOpacity: 0.30,
-                      shadowRadius: 4.65,
-                      elevation: 8,
-                  }}>
-                      <CustomButton
-                          buttonText={"Load more images"}
-                          onButtonPress={getImageData}
-                          isLoading={loading}
-                          customStyle={{
-                              position: "absolute",
-                              bottom: Platform.OS == "ios" ? insetScreen.bottom : moderateVerticalScale(15)
-                          }}
-                      />
+              loading && imageList?.length == 0
+                  ?
+                  <View style={styles.main}>
+                      <ActivityIndicator size='large' color={"#111111"} />
                   </View>
-              )
+                  
+                  : <FlatList
+                      showsVerticalScrollIndicator={false}
+                      ListHeaderComponent={_renderHeader}
+                      data={imageList?.length > 0 ? imageList : []}
+                      renderItem={_renderItem}
+                      keyExtractor={keyExtractor}
+                      scrollEventThrottle={'16'}
+                      contentContainerStyle={styles.container}
+                      style={styles.list}
+                      ListHeaderComponentStyle={styles.headerStyle}
+                      stickyHeaderIndices={[0]}
+                      ListEmptyComponent={emptyList}
+                      ListFooterComponent={renderFooter}
+                  />
           }
-    </View>
+    </SafeAreaView>
   )
 }
 
@@ -137,7 +121,9 @@ export default Home
 const styles = StyleSheet.create({
     main:{
         flex:1,
-        backgroundColor:"#FFFFFF"
+        backgroundColor:"#FFFFFF",
+        justifyContent:"center",
+        alignItems:"center"
     },
     list:{
         backgroundColor:"#FFFFFF",
@@ -147,6 +133,7 @@ const styles = StyleSheet.create({
         alignSelf:"center",
         rowGap:moderateVerticalScale(20),
         alignItems:"center",
+        paddingBottom:moderateVerticalScale(10)
        
     },
     text:{

@@ -10,6 +10,7 @@ import CustomButton from '../components/CustomButton'
 import { moderateVerticalScale } from 'react-native-size-matters'
 import Validtor from '../utils/Validtor'
 import { showTest } from '../utils/ShowToast'
+import CustomHeader from '../components/CustomHeader'
 
 const initialState = {
   firstName:"",
@@ -97,7 +98,7 @@ const Details = () => {
       showTest(result?.message);
       updateState(initialState)
     } catch (error) {
-      console.log("error", error);
+      showTest(error?.message);
     }
     finally {
       updateState((prev) => ({
@@ -108,6 +109,8 @@ const Details = () => {
   }
 
   const onChangeHandler = (type, value) => {
+
+    console.log("type",type);
     updateState((prev) => ({
       ...prev,
       [type]: value
@@ -115,37 +118,38 @@ const Details = () => {
 }
 console.log(cartItem);
   return (
-    <View style={styles.main}>
-      <View style={styles.main11}>
+    <SafeAreaView style={styles.main}>
+      <CustomHeader
+        title={"Detail Screen"}
+        custom={{
+          marginBottom:5
+        }}
+      />
         <KeyboardAwareScrollView
-          bounces={false}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingBottom: moderateVerticalScale(50)
-          }}
         >
-          {
-            !!imageDimensions &&
-            <View style={{
-              width: deviceWidth,
-              height: null,
-              aspectRatio: aspectR
-            }}>
-              <FastImage
-                resizeMode={FastImage.resizeMode.contain}
-                style={{
-                  flex: 1,
-                  aspectRatio: aspectR,
-                  alignSelf: "center"
-                }}
-                source={{
-                  uri: cartItem?.xt_image,
-                  cache: FastImage.cacheControl.immutable,
-                  priority: FastImage.priority.high
-                }}
-              />
-            </View>
-          }
+        {
+          !!imageDimensions &&
+          <View style={{
+            width: deviceWidth,
+            height: null,
+            aspectRatio: aspectR,
+          }}>
+            <FastImage
+              resizeMode={FastImage.resizeMode.contain}
+              style={{
+                flex: 1,
+                aspectRatio: aspectR,
+                alignSelf: "center"
+              }}
+              source={{
+                uri: cartItem?.xt_image,
+                cache: FastImage.cacheControl.immutable,
+                priority: FastImage.priority.high
+              }}
+            />
+          </View>
+        }
           <CustomInput
             title={'First Name'}
             placeholderText={"Enter First Name"}
@@ -157,47 +161,48 @@ console.log(cartItem);
           />
           <CustomInput
             title={'Last Name'}
-            placeholder={"Enter Last Name"}
+            placeholderText={"Enter Last Name"}
             value={lastName}
-            onChangeText={(text) => onChangeHandler('lastName', text)}
+            changeValue={(text) => onChangeHandler('lastName', text)}
             customStyle={{
               marginTop: 15
             }}
           />
           <CustomInput
             title={'Email'}
-            placeholder={"Enter email address"}
+            placeholderText={"Enter email address"}
             value={email}
-            onChangeText={(text) => onChangeHandler('email', text)}
+            changeValue={(text) => onChangeHandler('email', text)}
             customStyle={{
               marginTop: 15
             }}
           />
           <CustomInput
             title={'Mobile Number'}
-            placeholder={"Enter mobile number"}
-            onChangeText={(text) => onChangeHandler('phoneNumber', text)}
+            placeholderText={"Enter mobile number"}
+            changeValue={(text) => onChangeHandler('phoneNumber', text)}
             value={phoneNumber}
             maxLength={10}
             keyboardType={'phone-pad'}
             customStyle={{
-              marginTop: 15
+              marginVertical:moderateVerticalScale(13)
             }}
           />
         </KeyboardAwareScrollView>
-      </View>
-      <View style={styles.main12}>
-        <CustomButton
-          buttonText={"Submit"}
-          onButtonPress={Validation}
-          isLoading={loader}
-          customStyle={{
-            position: "absolute",
-            bottom: Platform.OS == "ios" ? insetScreen.bottom : moderateVerticalScale(15)
-          }}
-        />
-      </View>
-    </View>
+      <CustomButton
+        buttonText={"Submit"}
+        onButtonPress={Validation}
+        isLoading={loader}
+        customStyle={{
+          width:"30%",
+          alignSelf:"flex-end",
+          marginRight:"5%"
+          // position: "absolute",
+          // bottom: Platform.OS == "ios" ? insetScreen.bottom : moderateVerticalScale(15),
+          // top: 10
+        }}
+      />
+    </SafeAreaView>
   )
 }
 

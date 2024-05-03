@@ -10,7 +10,7 @@ const {placeholderText,value,title,customStyle,changeValue,keyboardType,maxLengt
           <Text style={styles.titleText}>{title}</Text>
           <View style={styles.main}>
               <TextInput
-                  placeholder="hello"
+                  placeholder={placeholderText}
                   placeholderTextColor={"#999"}
                   style={styles.inputStyle}
                   value={value}
@@ -29,10 +29,13 @@ const styles = StyleSheet.create({
     container:{
         width:deviceWidth*0.90,
         alignSelf:"center",
-        rowGap:moderateVerticalScale(10)
+        rowGap:moderateVerticalScale(10),
+        flexDirection:"row",
+        alignItems:"center",
+        justifyContent:"space-between"
     },
     main:{
-        width:"100%",
+        width:"60%",
         borderWidth:1,
         borderColor:"#999",
         borderRadius:10,
